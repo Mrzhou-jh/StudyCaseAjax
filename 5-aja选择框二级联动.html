@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <select name="province" id="select1">
+      <option value="">请选择所在省份</option>
+    </select>
+    <select name="city" id="select2">
+      <option value="">请选择所在城市</option>
+    </select>
+  </body>
+  <script src="./lib/template-web.js"></script>
+  <script src="./1-ajax封装.js"></script>
+  <script id="tp1" type="text/html">
+    <option value="">请选择所在省份</option>
+    {{each data1 item index}}
+    <option value="{{item.id}}">{{item.name}}</option>
+    {{/each}}
+  </script>
+  <script id="tp2" type="text/html">
+    <option value="">请选择所在城市</option>
+    {{each data1 item index}}
+    <option value="{{item.id}}">{{item.name}}</option>
+    {{/each}}
+  </script>
+
+  <script>
+    var select1 = document.getElementById("select1");
+    var select2 = document.getElementById("select2");
+    var select3 = document.getElementById("select3");
+    ajax({
+      type: "get", //请求类型get/post
+      url: "http://localhost:80/select1", //请求地址(完整地址)
+      data: {},
+      success: function(xhr, data) {
+        var html = template("tp1", { data1: JSON.parse(data) });
+        select1.innerHTML = html;
+      }
+    });
+    select1.onchange = function() {
+      var value = this.value;
+      ajax({
+        type: "get", //请求类型get/post
+        url: "http://localhost:80/select1", //请求地址(完整地址)
+        data: { id: value },
+        success: function(xhr, data) {
+          var html = template("tp2", { data1: JSON.parse(data) });
+          select2.innerHTML = html;
+        }
+      });
+      console.log(value);
+    };
+  </script>
+</html>

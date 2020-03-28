@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      ul,
+      li {
+        margin: 0;
+        padding: 0;
+      }
+      li {
+        list-style: none;
+      }
+    </style>
+  </head>
+  <body>
+    <input type="text" placeholder="请输入搜索内容" id="search" />
+    <ul id="cc">
+      <li></li>
+    </ul>
+    <script src="./lib/template-web.js"></script>
+    <script id="tp1" type="text/html">
+      {{each data item index}}
+      <li>{{item}}</li>
+      {{/each}}
+    </script>
+    <script>
+      var search = document.getElementById("search");
+      var cc = document.getElementById("cc");
+      var settimeoutID = "";
+      search.oninput = function() {
+        var content = this.value;
+        clearTimeout(settimeoutID);
+        settimeoutID = setTimeout(() => {
+          console.log(content);
+          var xhr = new XMLHttpRequest();
+          xhr.open("POST", "http://127.0.0.1/serach");
+          xhr.setRequestHeader(
+            "Content-Type",
+            "application/x-www-form-urlencoded"
+          );
+          xhr.onload = function() {
+            var html = template("tp1", { data: JSON.parse(xhr.responseText) });
+            cc.innerHTML = html;
+            console.log(JSON.parse(xhr.responseText));
+          };
+          xhr.send("content=" + content);
+        }, 1000);
+      };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .cg {
+        margin-left: 10px;
+        color: green;
+      }
+      .sb {
+        margin-left: 10px;
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <input type="text" id="test" placeholder="请输入邮箱" /><span
+      id="info"
+    ></span>
+    <script>
+      var test = document.getElementById("test");
+      var info = document.getElementById("info");
+      const reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+      console.log(test.value == "");
+
+      test.onblur = function() {
+        if (!reg.test(this.value) && this.value != "") {
+          info.innerText = "邮箱格式不正确";
+          info.className = "sb";
+          return;
+        }
+        if (this.value != "") {
+          //服务端请看3-app.js
+          var xhr = new XMLHttpRequest();
+          xhr.open(
+            "get",
+            "http://127.0.0.1:80/verification/input?emali=" + test.value
+          );
+          xhr.send();
+          xhr.onload = function() {
+            console.log("服务器回应了你");
+            console.log(xhr.responseText);
+            if (xhr.responseText == "cg") {
+              info.innerText = "邮箱注册成功";
+              info.className = "cg";
+            } else {
+              info.innerText = "邮箱注册失败，已经存在";
+              info.className = "sb";
+            }
+          };
+        }
+      };
+      test.onfocus = function() {
+        info.innerText = "";
+        info.className = "cg";
+      };
+    </script>
+  </body>
+</html>

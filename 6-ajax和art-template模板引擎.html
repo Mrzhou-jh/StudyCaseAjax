@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- 定义放置模板容器 -->
+    <div id="container"></div>
+    <!-- 引入模板引擎art-template(web版) -->
+    <script src="./lib/template-web.js"></script>
+    <!-- 设置模板(指定模板id)-->
+    <script id="tp1" type="text/html">
+      <div>
+          <h2>{{name}}</h2>
+          <h2>{{age}}</h2>
+      </div>
+    </script>
+    <script>
+      //通过template方法将数据拼接到id为tp1的模板中(渲染模板)
+      //template(参数1：模板id[服务端模板都为单独的art文件因此是写模板路径],参数2：要匹配到模板的数据)
+      var html = template("tp1", { name: "张三", age: "20" });
+      //将拼接好数据的模板添加到页面容器中
+      var container = document.querySelector("#container");
+      container.innerHTML = html;
+    </script>
+
+    <!--官网地址 https://aui.github.io/art-template/zh-cn/docs/index.html -->
+  </body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- JSONP原理（把url地址放到script标签的src属性里通过script标签发送请求此方式不受浏览器同源限制）
+      1、定义script标签在src属性里放置请求地址
+      2、服务端响应内容必须是一个函数调用（要传递的参数就放到该函数中相当于实参）该函数调用再包裹在双引号之中
+      3、客户端在写请求的script标签前定义一个全局函数且必须与服务端返回的函数名称相同（参数就相当于形参）通过这参数来获得要返回的值
+      4、两个函数就相当于回调函数一样
+    -->
+    <!-- ========================简单写法=============================== -->
+    <!--  -->
+    <!-- <script>
+      function fn(data) {
+        console.log("服务器响应数据" + data.name + data.age);
+      }
+    </script>
+    <script src="http://127.0.0.1:8081/getinfo"></script> -->
+
+    <!-- ========================优化写法=============================== -->
+    <!-- 简单写法问题【1】：请求时间不受控制必须按上至下执行到才会发送请求，因此做优化 -->
+    <!-- 简单写法问题【2】：客户端定义的函数和服务端发送的函数名称必须一样，因此有个改动另一个必须也做改动，又涉及不同开发人员所以造成不便(所以我们在请求地址中添加参数callback="客户端声明的函数值"把函数名当做参数传递到服务器) -->
+
+    <!-- 定义一个按钮当点击按钮时发送请求 -->
+    <!-- <button id="qingqiu">发送请求</button>
+    <script>
+      function fn(data) {
+        console.log("服务器响应数据" + data.name + data.age);
+      }
+    </script>
+    <script>
+      //获取按钮元素
+      var qingqiu = document.querySelector("#qingqiu");
+      //给按钮元素添加点击事件
+      qingqiu.onclick = function() {
+        //点击按钮后创建一个script标签
+        var script = document.createElement("script");
+        //设置script元素的src属性也就是放入请求地址
+        script.src = "http://127.0.0.1:8081/getinfo?callback=fn";
+        //再把script标签添加的body最后面(此时请求执行)
+        document.body.appendChild(script);
+        //因为每次发送请求都会在页面添加一个script标签这样是不太好的
+        //因此每次添加的这script加载完（也就是已经发送了请求）之后就可以把它移除
+        //监听script标签是否加载完成
+        script.onload = function() {
+          //script加载完成后从body中移除该标签
+          document.body.removeChild(script);
+        };
+      }; -->
+    <!-- ========================封装写法=============================== -->
+    <button id="qingqiu">发送请求</button>
+    <script>
+      //获取按钮元素
+      var qingqiu = document.querySelector("#qingqiu");
+      //给按钮元素添加点击事件
+      qingqiu.onclick = function() {
+        myjsonp({
+          url: "http://127.0.0.1:8081/getinfo",
+          success: function(data) {
+            console.log("服务端做出了响应-----" + data.name);
+          },
+          data: {}
+        });
+      };
+
+      function myjsonp(options) {
+        //创建一个script标签
+        var script = document.createElement("script");
+        //随机生成函数名用来做全局传递的全局函数名
+        var fnName =
+          "myJsonp" +
+          Math.random()
+            .toString()
+            .replace(".", "");
+        //将传入的函数提升为全局函数（在将此函数当做业内公认的参数名callback的值在请求地址中传递过去服务端通过解析该参数来获得函数名）
+        window[fnName] = options.success;
+        //通过jsonp发的请求都为get请求因此参数是直接拼接在请求地址后面的
+        var parmas = "";
+        for (const atter in options.data) {
+          parmas += "&" + atter + "=" + options.data[atter];
+        }
+        //设置script元素的src属性也就是放入请求地址并加上callback参数和其他要传递的参数
+        script.src = options.url + "?callback=" + fnName + parmas;
+        //再把script标签添加的body最后面(此时请求执行)
+        document.body.appendChild(script);
+        //因为每次发送请求都会在页面添加一个script标签这样是不太好的
+        //因此每次添加的这script加载完（也就是已经发送了请求）之后就可以把它移除
+        //监听script标签是否加载完成
+        script.onload = function() {
+          //script加载完成后从body中移除该标签
+          document.body.removeChild(script);
+        };
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- 使用ajax请求，没有办法通过表单form元素的action属性指定url和提交按钮配合自动表单值拼接，必须自己每个表单获取值拼接好或者是通过FormData对象来获取 -->
+    <!-- js中专门提供FormData对象来将普通html表单转换成对象形式（并支持二进制文件上传） -->
+    <!-- 注意FormData对象类型只能同过ajax的send方法发送，而用send方法发送参数则必须使用post请求方式 -->
+    <!-- 1、准备表单控件form并指定id,input控件必须指定name属性 -->
+    <form id="from">
+      <input type="text" name="username" />
+      <input type="password" name="password" />
+      <input type="file" name="file" id="" />
+      <!-- 按钮不要指定为type="submit"指定为button就行，我们自己监听按钮的点击事件 -->
+      <input type="button" value="提交" id="commit" />
+    </form>
+    <script>
+      //2、获取表单form控件
+      var form = document.querySelector("#form");
+      //3、获取提交按钮控件
+      var commit = document.querySelector("#commit");
+      //4、为按钮添加点击监听事件
+      commit.onclick = function() {
+        //5、创建formdata对象并传入from控件,此时formdata对象中存放的就是表单的键值对对象
+        var formdata = new FormData(from);
+        //formdata对象的get("key")方法通过input控件的name属性值获取输入的值
+        var username = formdata.get("username"); //获取输入的用户名;
+        var password = formdata.get("password"); //获取输入的密码;
+
+        //formdata对象的delete("key")方法，从formdata对象中删除某个键值对数据
+        formdata.delete("username"); //删除formdata中的username数据
+
+        //formdata对象的set('key',"value")方法可以通过input控件的name属性值重新设置输入的值（如果该属性不存在则添加新的键值对数据）
+        formdata.set("username", "李四"); //把用户名改为李四
+
+        //formdata对象的append("key","value");向formdata对象追加新的数据（与set的区别set遇到key相同会直接把值替换掉而append不会会直接创建一个同名key的数据）
+        formdata.append("sex", "男");
+
+        //formedata二进制文件上传
+
+        //6、创建ajax请求对象
+        var xhr = new XMLHttpRequest();
+        //7、设置请求方式和请求地址
+        xhr.open("post", "http://127.0.0.1:8080/formdata");
+        //xhr.setRequestHeader("Content-Type");
+        //8、发送请求并带上参数
+        xhr.send(formdata);
+        //9、监听服务端响应
+        xhr.onload = function() {
+          //10、判断服务端响应状态码为200即为成功
+          if (xhr.status == 200) {
+            console.log(xhr.responseText); //打印服务端的响应文本
+          }
+        };
+      };
+    </script>
+  </body>
+</html>

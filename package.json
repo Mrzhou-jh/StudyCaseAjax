@@ -1,0 +1,26 @@
+{
+  "name": "StudyCaseAjax",
+  "version": "1.0.0",
+  "description": "- windows10\r - nodejs v12.16.1",
+  "main": "1-ajax封装.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mrzhou-jh/StudyCaseAjax.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mrzhou-jh/StudyCaseAjax/issues"
+  },
+  "homepage": "https://github.com/Mrzhou-jh/StudyCaseAjax#readme",
+  "dependencies": {
+    "formidable": "^1.2.2"
+  }
+}
